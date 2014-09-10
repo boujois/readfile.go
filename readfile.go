@@ -40,25 +40,31 @@ func NewFastqFile(filename string) *FastqFile {
 
 
 func main() {
-	fq := NewFastqFile("tmp/sample.gz")
-	i := 0
-	results := []string{}
-	for {
-		line, _, err := fq.File.ReadLine()
-		i++
-		// if err == nil {
-		//     fmt.Println("Successfully read file")
-		//     os.Exit(0)
-		// }
-		if err != nil {
-			fmt.Println("Error reading file")
-			os.Exit(1)
+	command := string(os.Args[1])
+	if len(command) > 0 {
+		fq := NewFastqFile(command)
+		i := 0
+		results := []string{}
+		for {
+			line, _, err := fq.File.ReadLine()
+			i++
+			// if err == nil {
+			//     fmt.Println("Successfully read file")
+			//     os.Exit(0)
+			// }
+			if err != nil {
+				fmt.Println("Error reading file")
+				os.Exit(1)
+			}
+			results = append(results, string(line))
+			fmt.Printf("%q \n",string(line))
 		}
-		// tmp := string(line)
-		// var tmp string = line
-		results = append(results, string(line))
-		// fmt.Printf("%d: %s\n", i, line)
-		fmt.Printf("%q \n",string(line))
+	} else if len(command) < 1{
+		//this catch isn't working
+		fmt.Println("No argument passed")
+		os.Exit(1)
 	}
-	// fmt.Printf("%q",results)
+
+	
 }
+
