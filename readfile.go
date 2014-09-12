@@ -39,7 +39,7 @@ func NewFastqFile(filename string) *FastqFile {
 	// try to open as a gzip file
 	fz, err := gzip.NewReader(fh)
 	if err == nil {
-		fmt.Println("gziped file")
+		// fmt.Println("gziped file")
 		return &FastqFile{bufio.NewReader(fz), Q_unknown, 0}
 	}
 	// fall back on uncompressed bufio reader
@@ -65,33 +65,45 @@ func main() {
 			if err != nil {
 				// at the end of the loop...
 				i = 0
-				for _, v := range results {
-					words := strings.Fields(v)
+				for i := 5; i < len(results); i++ {
+				// for _, v := range results {
+					words := strings.Fields(results[i])
 					
 					if len(words) >1 {
 						for i := 1; i < len(words); i++ {
 							var word string = words[i]
 							s := strings.Split(word, ":")
 							cat,stat := s[0],s[len(s)-1]
-    						status, _ := strconv.ParseFloat(stat, 64)
+							//convert to string to int
+    						status, _ := strconv.Atoi(stat)
     						category, _ := strconv.Atoi(cat)
+    						counter = updateCounter(category,counter,status)
+							if counter != nil{}
     						
-    						if status >= 0 {
-	    						// insert
-	    						counter = floatInSlice(category,counter)
-								if counter != nil{}
-    						} else if status < 0 {
-    						// 	// remove from counter array
-    						}
 						}
 					}
 					i++
 				}
 				// fmt.Printf("%v ", counter) 
+				fmt.Printf("Total number of segments: %d \n",len(counter))
+				fmt.Printf("\n  Segment        Sum     \n") 
+				fmt.Printf("+--------------+---------+\n") 
 				for _, b := range counter {
-					fmt.Printf("Category: %d - Sum: %d\n\n",b.Cat,b.Sum) 
+					if b.Sum <10{
+						fmt.Printf("| %d        | %d       |\n",b.Cat,b.Sum)
+					} 
+					if b.Sum > 9 && b.Sum < 99{
+						fmt.Printf("| %d        | %d      |\n",b.Cat,b.Sum)
+					}
+					if b.Sum > 99 && b.Sum < 999 {
+						fmt.Printf("| %d        | %d     |\n",b.Cat,b.Sum)
+					}
+					if b.Sum > 999 && b.Sum < 9999 {
+						fmt.Printf("| %d        | %d    |\n",b.Cat,b.Sum)
+					}
+					 
+					fmt.Printf("+--------------+---------+\n") 
 				}
-				fmt.Printf("\n -------- LOOP ------\n") 
 				os.Exit(1)
 			}
 		}
@@ -105,12 +117,17 @@ func main() {
 }//end of main
 
 
-func floatInSlice(category int, counter []AudienceCategory) []AudienceCategory {
+func updateCounter(category int, counter []AudienceCategory,status int) []AudienceCategory {
 	
 	for i := 0; i < len(counter); i++ {
 		if counter[i].Cat == category {
-            counter[i].Sum = counter[i].Sum+1
-
+			if status >= 0 {
+				// insert
+				counter[i].Sum = counter[i].Sum+1
+			} else if status < 0 {
+				// remove from counter array
+				counter[i].Sum = counter[i].Sum-1
+			}
             return counter
         }
 	}
