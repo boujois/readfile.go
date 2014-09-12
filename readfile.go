@@ -16,11 +16,13 @@ const (
 	Q_phred64
 	Q_solexa
 )
+
 var results = [] string{}
 type AudienceCategory struct {
 	Cat int
 	Sum int
 }
+
 var counter = []AudienceCategory{}
 
 
@@ -49,10 +51,8 @@ func NewFastqFile(filename string) *FastqFile {
 
 
 func main() {
-
+	// the the bash terminal argument
 	command := string(os.Args[1])
-	
-	// counter := map[int] string{}
 	if len(command) > 0 {
 		fq := NewFastqFile(command)
 		var i int = 0
@@ -64,9 +64,8 @@ func main() {
 			
 			if err != nil {
 				// at the end of the loop...
-				i = 0
+				// skip the first 5 lines of file with metadata
 				for i := 5; i < len(results); i++ {
-				// for _, v := range results {
 					words := strings.Fields(results[i])
 					
 					if len(words) >1 {
@@ -89,10 +88,10 @@ func main() {
 				fmt.Printf("\n  Segment        Sum     \n") 
 				fmt.Printf("+--------------+---------+\n") 
 				for _, b := range counter {
-					if b.Sum <10{
+					if b.Sum <10 {
 						fmt.Printf("| %d        | %d       |\n",b.Cat,b.Sum)
 					} 
-					if b.Sum > 9 && b.Sum < 99{
+					if b.Sum > 9 && b.Sum < 99 {
 						fmt.Printf("| %d        | %d      |\n",b.Cat,b.Sum)
 					}
 					if b.Sum > 99 && b.Sum < 999 {
@@ -101,7 +100,6 @@ func main() {
 					if b.Sum > 999 && b.Sum < 9999 {
 						fmt.Printf("| %d        | %d    |\n",b.Cat,b.Sum)
 					}
-					 
 					fmt.Printf("+--------------+---------+\n") 
 				}
 				os.Exit(1)
